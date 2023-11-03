@@ -1,3 +1,10 @@
 pandas
 streamlit
 plotnine
+bs4
+lxml
+cchardet
+llama-index 
+docx2txt 
+pypdf
+docarray
