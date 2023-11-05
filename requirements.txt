@@ -7,4 +7,6 @@ cchardet
 llama-index 
 docx2txt 
 pypdf
-docarray
+#docarray
+openpyxl
+httpx
