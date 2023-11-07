@@ -13,6 +13,17 @@
             "justMyCode": false
         },
         {
+            "name": "Python: Launch Scrapy Spider",
+            "type": "python",
+            "request": "launch",
+            "module": "scrapy",
+            "args": [
+                "runspider",
+                "${file}"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Streamlit: Current File",
             "type": "python",
             "request": "launch",
