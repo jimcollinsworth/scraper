@@ -1,10 +1,10 @@
 from pathlib import Path
 import json
 import scrapy
+import urllib.parse
 
-
-class ArcgisSpider(scrapy.Spider):
-    name = "arcgis"
+class ArcgisAPISpider(scrapy.Spider):
+    name = "arcgisapi"
     urls = {
         "https://maps.cityofmadison.com/arcgis/rest/services/Public/OPEN_DB_TABLES/MapServer/2/query?where=1%3D1&outFields=%2A&outSR=4326&f=json": "madison-wi-city-incidents",
         "https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Police_Incidents/FeatureServer/0/query?where=1%3D1&outFields=%2A&outSR=4326&f=json": "what-city-incidents",
@@ -15,19 +15,17 @@ class ArcgisSpider(scrapy.Spider):
     }
 
     def start_requests(self):
-        
         for url in [k for k,v in self.urls.items()]:
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        #TODO for each main url, we want to save the metadata too, so create a couple urls
-        # not in parse?
-        # + /query?where=1%3D1&outFields=*&outSR=4326&f=json 
-        # write the query parameters out to the json too
-        # as is for meta, get date updated and other info, add it to the output json
-        #TODO name files based on city, then keyword/function, then file type extension this will come from the csv that drives the process
-        name = self.urls[response.url]
+        item = {}
+        
+        domain = urllib.parse.urlparse(response.url).netloc
+        name = domain.replace(".", "-")
         filename = f"arcgis-{name}.json"
         Path(filename).write_text(json.dumps(response.json(), indent=4))
-        self.log(f"Saved file {filename}")
+        item['message']=f"saved {filename}"
+
+        return item
         

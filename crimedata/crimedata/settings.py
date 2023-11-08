@@ -12,7 +12,6 @@ BOT_NAME = "crimedata"
 SPIDER_MODULES = ["crimedata.spiders"]
 NEWSPIDER_MODULE = "crimedata.spiders"
 
-
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "crimedata (+http://www.yourdomain.com)"
 
@@ -44,9 +43,9 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    "crimedata.middlewares.CrimedataSpiderMiddleware": 543,
-#}
+SPIDER_MIDDLEWARES = {
+    "scrapy_magicfields.MagicFieldsMiddleware": 100,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -62,9 +61,11 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "crimedata.pipelines.CrimedataPipeline": 300,
-#}
+ITEM_PIPELINES = {
+    "scrapy.pipelines.files.FilesPipeline": 300,
+}
+
+FILES_STORE = r'..\..'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -81,13 +82,22 @@ ROBOTSTXT_OBEY = True
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-#HTTPCACHE_ENABLED = True
-#HTTPCACHE_EXPIRATION_SECS = 0
-#HTTPCACHE_DIR = "httpcache"
-#HTTPCACHE_IGNORE_HTTP_CODES = []
-#HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
+HTTPCACHE_ENABLED = True
+HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_DIR = "httpcache"
+HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+# copies these fields into the item. can also save scrapy settings and env variables.
+xMAGIC_FIELDS = {
+    "timestamp": "$time",
+    "spider": "$spider:name",
+    "jobid": "$jobid",
+    "url": "$response.url",
+    "status": "$response.status"
+}
