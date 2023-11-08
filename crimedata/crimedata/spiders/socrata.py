@@ -1,3 +1,13 @@
+''' crawl data from socrata online sources
+
+https://dev.socrata.com/docs/endpoints.html
+https://dev.socrata.com/foundry/data.austintexas.gov/fdj4-gpfu
+
+should register for an api app token and pass it in.
+
+'''
+
+
 import scrapy
 from pathlib import Path
 import logging as log
