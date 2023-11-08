@@ -6,8 +6,17 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
+import json
 
+class JsonlWriterPipeline:
+    def open_spider(self, spider):
+        print(f"-------{dir(self)}")
+        self.file = open("items.jsonl", "w")
 
-class CrimedataPipeline:
+    def close_spider(self, spider):
+        self.file.close()
+
     def process_item(self, item, spider):
+        line = json.dumps(ItemAdapter(item).asdict()) + "\n"
+        self.file.write(line)
         return item

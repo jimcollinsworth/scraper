@@ -3,6 +3,12 @@ import json
 import scrapy
 import urllib.parse
 
+class ArcgisItem(scrapy.Item):
+    file_urls = scrapy.Field()
+    files = scrapy.Field()
+    url = scrapy.Field()
+    status = scrapy.Field()
+
 class ArcgisAPISpider(scrapy.Spider):
     name = "arcgisapi"
     urls = {
@@ -19,13 +25,14 @@ class ArcgisAPISpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        item = {}
-        
-        domain = urllib.parse.urlparse(response.url).netloc
-        name = domain.replace(".", "-")
-        filename = f"arcgis-{name}.json"
-        Path(filename).write_text(json.dumps(response.json(), indent=4))
-        item['message']=f"saved {filename}"
+        item = ArcgisItem()
 
-        return item
+        item['status'] = response.status
+        item['url'] = response.url
+
+        # save file name to download
+        item['file_urls'] = [response.url]
+        
+        yield item
+
         

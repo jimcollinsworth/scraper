@@ -43,9 +43,9 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-SPIDER_MIDDLEWARES = {
-    "scrapy_magicfields.MagicFieldsMiddleware": 100,
-}
+#SPIDER_MIDDLEWARES = {
+#    "scrapy_magicfields.MagicFieldsMiddleware": 100,
+#}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
@@ -62,10 +62,11 @@ SPIDER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    "scrapy.pipelines.files.FilesPipeline": 300,
+    "scrapy.pipelines.files.FilesPipeline": 1,
+    "crimedata.pipelines.JsonlWriterPipeline": 200,
 }
 
-FILES_STORE = r'..\..'
+FILES_STORE = r'.'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -92,12 +93,3 @@ HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
-
-# copies these fields into the item. can also save scrapy settings and env variables.
-xMAGIC_FIELDS = {
-    "timestamp": "$time",
-    "spider": "$spider:name",
-    "jobid": "$jobid",
-    "url": "$response.url",
-    "status": "$response.status"
-}
