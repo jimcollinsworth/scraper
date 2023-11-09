@@ -2,15 +2,12 @@ from pathlib import Path
 import json
 import scrapy
 import urllib.parse
-
-class ArcgisItem(scrapy.Item):
-    file_urls = scrapy.Field()
-    files = scrapy.Field()
-    url = scrapy.Field()
-    status = scrapy.Field()
+from crimedata.items import Item
 
 class ArcgisAPISpider(scrapy.Spider):
-    name = "arcgisapi"
+    name = "arcgis-api"
+    #TODO read in the urls XLS->df, use URL as key so other code can lookup all the related data. 
+    #TODO allow some filtering on the crawler command line (ID, last updated, error status..)
     urls = {
         "https://maps.cityofmadison.com/arcgis/rest/services/Public/OPEN_DB_TABLES/MapServer/2/query?where=1%3D1&outFields=%2A&outSR=4326&f=json": "madison-wi-city-incidents",
         "https://services.arcgis.com/v400IkDOw1ad7Yad/arcgis/rest/services/Police_Incidents/FeatureServer/0/query?where=1%3D1&outFields=%2A&outSR=4326&f=json": "what-city-incidents",
@@ -25,12 +22,13 @@ class ArcgisAPISpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        item = ArcgisItem()
+        item = Item()
 
         item['status'] = response.status
         item['url'] = response.url
 
         # save file name to download
+        #TODO the saved files end up in full\guid, need to override location optionally and make filename natural (id-type-??-??)
         item['file_urls'] = [response.url]
         
         yield item

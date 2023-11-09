@@ -11,9 +11,10 @@ should register for an api app token and pass it in.
 import scrapy
 from pathlib import Path
 import logging as log
+from crimedata.items import Item
 
 class SocrataSpider(scrapy.Spider):
-    name = "socrata"
+    name = "socrata-api"
     urls = {
         #"https://data.nashville.gov/api/views/2u6v-ujjs/rows.csv?date=20231107&accessType=DOWNLOAD": "nashville-tn-city-incidents",
         #"https://data.memphistn.gov/api/views/ybsi-jur4/rows.csv?date=20231107&accessType=DOWNLOAD": "memphis-tn-city-incidents",
@@ -28,9 +29,15 @@ class SocrataSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse)
 
     def parse(self, response):
-        name = self.urls[response.url]
-        filename = f"socrata-{name}.csv"
-        Path(filename).write_text(response.text)
-        log.info(f"Saved file {filename}")
+        item = Item()
+
+        item['status'] = response.status
+        item['url'] = response.url
+
+        # save file name to download
+        #TODO the saved files end up in full\guid, need to override location optionally and make filename natural (id-type-??-??)
+        item['file_urls'] = [response.url]
+        
+        yield item
         
 

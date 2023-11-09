@@ -1,5 +1,4 @@
 scrapy
-scrapy-magicfields
 #pandas
 #streamlit
 #plotnine
