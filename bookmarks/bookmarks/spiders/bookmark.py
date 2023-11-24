@@ -1,5 +1,5 @@
 import scrapy
-
+# should be considering using this data - https://commoncrawl.org/
 
 class BookmarkSpider(scrapy.Spider):
     name = "bookmark"

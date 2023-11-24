@@ -1,5 +1,5 @@
 scrapy
-#pandas
+pandas
 #streamlit
 #plotnine
 #bs4
