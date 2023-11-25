@@ -1,26 +1,46 @@
 # scraper
-*crimedata web scraper*
+*bookmark web scraper*
+
+Crawls URLs from a list of browser bookmarks to gather metadata and other information useful for site categorization. Support a number of different spiders/options such as metadata, shallow, deep crawls, links vs text/content.
+
+Track the url status, some will fail, retry. or redirect to another domain. Maybe url fails but domain is good. Record this so the next crawl they get filtered.
+
+Besides crawling the urls themselves, we can can also look them up in archive, search, directory, categorization sites such as google or commoncrawl.org.Want to build useful knowledge nets of my bookmarks, identify authorative vs biased sites and much more. 
+
+Feed this KN back into the browser, first as an import file that has resorted/re-categorized bookmarks (static use-case), and next as a browser extension with dynamic updating and resorting.
 
 Retrieve metadata for the crawled content, as well as any usage requirements.
-Pull down terms and use, store and version it. This information will all be available for users of the real time dashboard, so they can see detailed sourcing information.
+Pull down terms and use, store and version it. This information will all be available for users of the real-time dashboard, so they can see detailed sourcing information.
+
 Some sites suggest a token for access. Per researcher guidelines we should identify ourselves/NORC when scraping.
 
 Scrapy for framework - Python, enables lots of functionality out of the box, scales from individual use to large cloud easily, good plugin ecosystem with multiple javascript engines available.
 
-Use the XLS file directly for driving the scraper, will get list of urls with IDs and other metadata from the XLS file:Crime data_Web Scraping_2023sept18.xlsx
 **input meta data**
- - Type - crime-incidents
- - URL ID - memphis-city-ky
- - root URL - https://maps.cityofmadison.com/arcgis/rest/services/Public/OPEN_DB_TABLES/MapServer/2/    (the crawler might append something like query?where=1%3D1&outFields=%2A&outSR=4326&f=json)
- - crawler ID - arcgis-api, socrata-api, arcgis-table-ux.....
+ - bookmark url exported file
 
 **tasks**
  - output file names - override
  - common jsonl output for all spiders (only ever append)
 
  **spiders**
-  - arcgis-api - targets the arcgis cloud API, can get full JSON feature files. This is the data as loaded into the mapping system, and has geodata such as extents. Might be missing fields available in the CSV/Tables.
-        - API docs https://developers.arcgis.com/rest/services-reference/enterprise/get-started-with-the-services-directory.htm
-  - socrata-api - API docs from city of austin site https://dev.socrata.com/foundry/data.austintexas.gov/fdj4-gpfu
-  - arcgis-table-ux - uses the arcgis cloud table UX to filter data, prepare downloads, wait and download CSV data. More complicated but can be very selective and efficient in the filtering.
+  - bookmark-meta - get basic info about the URL, record status. Try domain only too, or maybe first.  
+  - bookmark-links
+  - bookmark-content
+
+**pipelines**
+Do some post processing on results, make use of LLMs for summarization/categorization/parsing. Use local LLM.
+Rely on http caching so we aren't necessarily downloading data every time.
+
+**monitoring**
+Want to see activity of crawler for development and operations; domain/urls, status, size, messages, times, errors.
+Options include:
+  - console log - INFO->DEBUG level output, should use 'key=value, key=value' for important info, this can be read by Rundeck for automation or a dashboard for reporting and monitoring. [?python dashboard/monitoring solution]
+  - items.json - one line per request, can contain all data or just meta.
+  - scrapy API - run crawler as process, automate with scrapyd.
+
+**db/file store**
+How about a DuckDB/JSON/Pickled for both input (URLS..) and output (metadata, features, text, image), where retrieved data and subsequent calculated/inferred features can be added incrementally. Local db/files are easy to manage, can be versioned, and efficient. Default process could create new data on output, with an --inplace option to update the input file. Use pandas as the input/output layer, and we can support many file formats familiar to data scientists easily.
+
+With this workflow the user can iterate crawling and 
 

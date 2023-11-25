@@ -13,13 +13,14 @@
             "justMyCode": false
         },
         {
-            "name": "Python: Launch Scrapy Spider",
+            "name": "Python: crawl bookmark",
             "type": "python",
             "request": "launch",
+            "cwd": "${workspaceFolder}/bookmarks",
             "module": "scrapy",
             "args": [
-                "runspider",
-                "${file}"
+                "crawl",
+                "bookmark-meta"
             ],
             "console": "integratedTerminal"
         },
