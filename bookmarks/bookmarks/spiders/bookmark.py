@@ -1,5 +1,7 @@
 import scrapy
 import time
+import random
+import string
 from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
 from scrapy.spidermiddlewares.httperror import HttpError
@@ -27,22 +29,26 @@ class BookmarkSpider(scrapy.Spider):
         return urls
 
     def start_requests(self):
+        # create jobID for all these URLS
+        job = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
         urls = self.read_urls_from_file('../data/csv/bookmarks_urls.csv')
         row = 0
+
         for url in urls:
             row += 1
             # clean up url
             url = clean_url(url)
             yield scrapy.Request(url=url, callback=self.parse, 
                                  errback=self.errback_httpbin, 
-                                 cb_kwargs=dict(row=row))
+                                 cb_kwargs=dict(row=row, job=job))
 
-    def parse(self, response, row):
+    def parse(self, response, row, job):
         yield {
-            "url": response.url,
+            "job": job,
+            "row": row,
             "status": response.status,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "row": row
+            "url": response.url
         }
 
     def errback_httpbin(self, failure):
@@ -75,10 +81,10 @@ class BookmarkSpider(scrapy.Spider):
             self.logger.error("NotSupported on %s", url)
 
         yield {
-            "url": url,
+            "row": failure.request.cb_kwargs['row'],
             "status": status,
             "message": str(failure.value),
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "row": failure.request.cb_kwargs['row']
+            "url": url
         }
 
