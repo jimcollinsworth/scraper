@@ -42,5 +42,6 @@ Options include:
 **db/file store**
 How about a DuckDB/JSON/Pickled for both input (URLS..) and output (metadata, features, text, image), where retrieved data and subsequent calculated/inferred features can be added incrementally. Local db/files are easy to manage, can be versioned, and efficient. Default process could create new data on output, with an --inplace option to update the input file. Use pandas as the input/output layer, and we can support many file formats familiar to data scientists easily.
 
-With this workflow the user can iterate crawling and 
+With this workflow the user can iterate crawling and cleaning up the list of bookmarks (and fixing code). Each time more bookmarks get sucessfully processed, and then filted out on the next crawl.
+The db/file stores the status/timestamp and other results of the last crawl. This file can be versioned with git or other tech.
 
