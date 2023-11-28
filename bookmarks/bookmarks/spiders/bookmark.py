@@ -38,6 +38,8 @@ class BookmarkSpider(scrapy.Spider):
             row += 1
             # clean up url
             url = clean_url(url)
+            self.logger.info(f"start: {url}")
+
             yield scrapy.Request(url=url, callback=self.parse, 
                                  errback=self.errback_httpbin, 
                                  cb_kwargs=dict(row=row, job=job))
@@ -79,8 +81,12 @@ class BookmarkSpider(scrapy.Spider):
         elif failure.check(NotSupported):
             url = failure.request.url
             self.logger.error("NotSupported on %s", url)
+        else:
+            url = failure.request.url
+            self.logger.error(f"Unknown error {failure.value} on {url}")    
 
         yield {
+            "job": failure.request.cb_kwargs['job'],
             "row": failure.request.cb_kwargs['row'],
             "status": status,
             "message": str(failure.value),
