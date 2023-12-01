@@ -1,7 +1,14 @@
+#TODO spider ends after too many timeouts, need to ignore/return item tried DontCloseSpider https://docs.scrapy.org/en/latest/topics/exceptions.html
+#TODO fallback to root domain crawl if url not found
+#TODO make multiple requests but merge into single item (like a sub-crawl)
+
+
 # scraper
 *bookmark web scraper*
 
 Crawls URLs from a list of browser bookmarks to gather metadata and other information useful for site categorization. Support a number of different spiders/options such as metadata, shallow, deep crawls, links vs text/content.
+
+Help cleanup bookmark lists-bad domains, missing pages, etc. Could search for internet archive page. Classify all the urls with status and crawl result so user can filter later and re-import clean lists back into their browser.
 
 Track the url status, some will fail, retry. or redirect to another domain. Maybe url fails but domain is good. Record this so the next crawl they get filtered.
 

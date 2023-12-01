@@ -6,33 +6,38 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+SCHEDULER_PRIORITY_QUEUE = "scrapy.pqueues.DownloaderAwarePriorityQueue"
 
 BOT_NAME = "bookmarks"
 
 SPIDER_MODULES = ["bookmarks.spiders"]
 NEWSPIDER_MODULE = "bookmarks.spiders"
 
+USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "bookmarks (+http://www.yourdomain.com)"
+SCHEDULER_PRIORITY_QUEUE = "scrapy.pqueues.DownloaderAwarePriorityQueue"
 
 # Miscelaneous settings, only doing shallow crawling for this case, and many bookmark links could be very old and unreliable
 ROBOTSTXT_OBEY = False
 LOG_LEVEL = "WARN"
-DNS_TIMEOUT = 15
-DOWNLOAD_TIMEOUT = 15
+DNS_TIMEOUT = 5
+DOWNLOAD_TIMEOUT =5
 DOWNLOAD_DELAY = 5
 DUPEFILTER_DEBUG = True
 REDIRECT_ENABLED = True
-COOKIES_ENABLED = True
+COOKIES_ENABLED = False
+HTTPERROR_ALLOWED_CODES = [301,302]
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+# Setting it high because we are doing a broad crawl, not deep https://docs.scrapy.org/en/latest/topics/broad-crawls.html
+CONCURRENT_REQUESTS = 64
+REACTOR_THREADPOOL_MAXSIZE = 20
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+DOWNLOAD_DELAY = 5
+
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -61,9 +66,9 @@ SPIDER_MIDDLEWARES = {
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
-#EXTENSIONS = {
-#    "scrapy.extensions.telnet.TelnetConsole": None,
-#}
+EXTENSIONS = {
+    "scrapy.extensions.corestats.CoreStats": 500,
+}
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
