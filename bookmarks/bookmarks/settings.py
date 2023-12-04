@@ -19,19 +19,19 @@ SCHEDULER_PRIORITY_QUEUE = "scrapy.pqueues.DownloaderAwarePriorityQueue"
 
 # Miscelaneous settings, only doing shallow crawling for this case, and many bookmark links could be very old and unreliable
 ROBOTSTXT_OBEY = False
-LOG_LEVEL = "WARN"
+LOG_LEVEL = "DEBUG"
 DNS_TIMEOUT = 5
 DOWNLOAD_TIMEOUT =5
 DOWNLOAD_DELAY = 5
 DUPEFILTER_DEBUG = True
 REDIRECT_ENABLED = True
-COOKIES_ENABLED = False
-HTTPERROR_ALLOWED_CODES = [301,302]
+COOKIES_ENABLED = True
+HTTPERROR_ALLOWED_CODES = [301,302,404]
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # Setting it high because we are doing a broad crawl, not deep https://docs.scrapy.org/en/latest/topics/broad-crawls.html
-CONCURRENT_REQUESTS = 64
-REACTOR_THREADPOOL_MAXSIZE = 20
+CONCURRENT_REQUESTS = 1
+REACTOR_THREADPOOL_MAXSIZE = 1
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -60,9 +60,9 @@ SPIDER_MIDDLEWARES = {
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    "bookmarks.middlewares.BookmarksDownloaderMiddleware": 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

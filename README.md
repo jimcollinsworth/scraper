@@ -1,6 +1,10 @@
 #TODO spider ends after too many timeouts, need to ignore/return item tried DontCloseSpider https://docs.scrapy.org/en/latest/topics/exceptions.html
-#TODO fallback to root domain crawl if url not found
-#TODO make multiple requests but merge into single item (like a sub-crawl)
+      could use logic like-process all urls, get list of success, might miss a few to errors. But compare processed to input lists to find the accurate list of exceptions.
+
+#TODO fallback to root domain crawl if url not found, or maybe get all the root domains first (no-dups), then if ok, go for sub-page(s), else try archive.org,commoncrawl..
+
+#TODO make multiple requests but merge into single item (like a sub-crawl) 
+      seems like many sites (popular) refuse the crawler right away, or timeout. Do I need proxy, user-agents, ...?
 
 
 # scraper

@@ -59,3 +59,27 @@ class BookmarksSpiderMiddleware:
     def close_spider(self, spider): 
         #TODO ??
         raise DontCloseSpider 
+
+
+class BookmarksDownloaderMiddleware:
+
+    def process_request(self, request, spider):
+        # Called for each request that goes through the downloader
+        # middleware.
+
+        # Should return None or raise an exception.
+        return None
+
+    def process_response(self, request, response, spider):
+        # Called with the response returned from the downloader.
+
+        # Must return a Response, or raise a IgnoreRequest, or raise an exception.
+        return response
+
+    def process_exception(self, request, exception, spider):
+        # Called when a download handler or a process_request()
+        # (from other downloader middleware) raises an exception.
+
+        # Should return either None or a Response, or raise an exception.
+        return None
+

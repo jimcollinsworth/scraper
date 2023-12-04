@@ -38,14 +38,15 @@ class BookmarkSpider(scrapy.Spider):
         # create jobID for all these URLS
         job = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
         urls = self.read_urls_from_file('../data/csv/bookmarks_urls.csv')
+        #urls = self.read_urls_from_file('../data/csv/bookmark.csv')
         
         # whitelist private urls
         print(f"read {len(urls)} urls")
-        urls = [x for x in urls if 'norc.' not in x and 'breaktech.' not in x]
+        urls = [x for x in urls if 'norc.' not in x and 'breaktech.' not in x and '192.168.' not in x and 'localhost' not in x]
         print(f"processing {len(urls)} urls")
  
-        row = 3500
-        for url in urls[row:row+500]:
+        row = 0
+        for url in urls:
             print(f"start:{row}-{url}")
             row += 1
             # clean up url
