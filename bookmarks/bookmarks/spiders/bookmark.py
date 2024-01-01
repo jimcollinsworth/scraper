@@ -6,6 +6,7 @@ from twisted.internet.error import DNSLookupError
 from twisted.internet.error import TimeoutError, TCPTimedOutError
 from scrapy.spidermiddlewares.httperror import HttpError
 from scrapy.exceptions import NotSupported
+from urllib.parse import urlparse
 
 # should be considering using this data - https://commoncrawl.org/
 
@@ -16,6 +17,11 @@ def clean_url(url):
 
     if url[-1:] == '"':
         url = url[:-1]
+
+    parsed_url = urlparse(url)
+    domain = parsed_url.netloc
+    protocol = parsed_url.scheme
+    url = f"{protocol}://{domain}"
 
     return url
 
@@ -32,21 +38,38 @@ class BookmarkSpider(scrapy.Spider):
         # create jobID for all these URLS
         job = ''.join(random.choices(string.ascii_lowercase + string.digits, k=4))
         urls = self.read_urls_from_file('../data/csv/bookmarks_urls.csv')
+        #urls = self.read_urls_from_file('../data/csv/bookmark.csv')
+        
+        # whitelist private urls
+        print(f"read {len(urls)} urls")
+        urls = [x for x in urls if 'norc.' not in x and 'breaktech.' not in x and '192.168.' not in x and 'localhost' not in x]
+        print(f"processing {len(urls)} urls")
+ 
         row = 0
-
         for url in urls:
+            print(f"start:{row}-{url}")
             row += 1
             # clean up url
             url = clean_url(url)
+<<<<<<< HEAD
             self.logger.info(f"start: row={row},url={url}")
+=======
+            
+            self.logger.info(f"start: {url}")
+>>>>>>> 3b8e5aec8314268d5843b3285cd1866ca99af189
 
             yield scrapy.Request(url=url, callback=self.parse, 
-                                 errback=self.errback_httpbin, 
+                                 errback=self.errback_httpbin,
+                                 meta={'dont_retry':True}, 
                                  cb_kwargs=dict(row=row, job=job))
 
     def parse(self, response, row, job):
+<<<<<<< HEAD
         self.logger.info(f"done: row={row},url={response.url}")
 
+=======
+        print(f"output:{row}-{response.url}")
+>>>>>>> 3b8e5aec8314268d5843b3285cd1866ca99af189
         yield {
             "job": job,
             "row": row,
@@ -57,36 +80,26 @@ class BookmarkSpider(scrapy.Spider):
         }
 
     def errback_httpbin(self, failure):
-        # log all failures
-        self.logger.info(f"row={failure.request.cb_kwargs['row']}, {repr(failure)}")
-
+        # capture all request errors (but not file downloads?)
+        # want to output an item record with details for every input URL, trying not to lose any urls when processing
+        row = failure.request.cb_kwargs['row']
+        print(f"error:{row}-{failure}")
         # in case you want to do something special for some errors,
         # you may need the failure's type:
+        #if failure.check(DNSLookupError):
+        #   pass
 
-        status = 0
-        url = None
-
-        if failure.check(HttpError):
-            # these exceptions come from HttpError spider middleware
-            # you can get the non-200 response
+        # errors either have a response or didn't even get that far
+        if response := hasattr(failure.value,'response'):
             url = failure.value.response.url
-            self.logger.error("HttpError on %s", url)
-
-        elif failure.check(DNSLookupError):
-            # this is the original request
-            url = failure.request.url
-            self.logger.error("DNSLookupError on %s", url)
-
-        elif failure.check(TimeoutError, TCPTimedOutError):
-            url = failure.request.url
-            self.logger.error("TimeoutError on %s", url)
-    
-        elif failure.check(NotSupported):
-            url = failure.request.url
-            self.logger.error("NotSupported on %s", url)
+            status = failure.value.response.status
+            message = f"{failure.value} {failure.value.response}"
         else:
             url = failure.request.url
-            self.logger.error(f"Unknown error {failure.value} on {url}")    
+            status = 0
+            message = f"{failure.value}"
+
+        self.logger.error(f"http error: {status}-{message}-{row}{url}")    
 
         yield {
             "job": failure.request.cb_kwargs['job'],
