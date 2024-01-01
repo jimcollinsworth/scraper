@@ -14,7 +14,7 @@ NEWSPIDER_MODULE = "bookmarks.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "bookmarks (+http://www.yourdomain.com)"
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1'
 
 # Miscelaneous settings, only doing shallow crawling for this case, and many bookmark links could be very old and unreliable
 ROBOTSTXT_OBEY = False
@@ -25,6 +25,7 @@ DOWNLOAD_DELAY = 5
 DUPEFILTER_DEBUG = True
 REDIRECT_ENABLED = True
 COOKIES_ENABLED = True
+HTTPERROR_ALLOWED_CODES = [403, 404]
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

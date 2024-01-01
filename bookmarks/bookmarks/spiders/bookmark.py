@@ -38,18 +38,21 @@ class BookmarkSpider(scrapy.Spider):
             row += 1
             # clean up url
             url = clean_url(url)
-            self.logger.info(f"start: {url}")
+            self.logger.info(f"start: row={row},url={url}")
 
             yield scrapy.Request(url=url, callback=self.parse, 
                                  errback=self.errback_httpbin, 
                                  cb_kwargs=dict(row=row, job=job))
 
     def parse(self, response, row, job):
+        self.logger.info(f"done: row={row},url={response.url}")
+
         yield {
             "job": job,
             "row": row,
             "status": response.status,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "size": len(response.text),
             "url": response.url
         }
 
@@ -88,7 +91,7 @@ class BookmarkSpider(scrapy.Spider):
         yield {
             "job": failure.request.cb_kwargs['job'],
             "row": failure.request.cb_kwargs['row'],
-            "status": status,
+            "status": failure.value.response.status,
             "message": str(failure.value),
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
             "url": url
